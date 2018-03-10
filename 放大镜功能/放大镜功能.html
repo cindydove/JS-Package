@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>放大镜功能</title>
+	<meta charset="UTF-8">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		
+		.box {
+			width: 350px;
+			height: 350px;
+			margin: 100px;
+			border: 1px solid #ccc;
+			position: relative;
+		}
+		
+		.big {
+			width: 400px;
+			height: 400px;
+			position: absolute;
+			top: 0;
+			left: 360px;
+			border: 1px solid #ccc;
+			overflow: hidden;
+			display: none;
+		}
+		
+		.mask {
+			width: 175px;
+			height: 175px;
+			background: rgba(255, 255, 0, 0.4);
+			position: absolute;
+			top: 0;
+			left: 0;
+			cursor: move;
+			display: none;
+		}
+		
+		.small {
+			position: relative;
+		}
+		
+		img {
+			vertical-align: middle;
+			
+		}
+		.big img{
+			position: absolute;
+		}
+	</style>
+	<script src = "run.js"></script>
+	<script>
+      //文件入口
+      window.onload = function () {
+          var box = document.getElementById("box");
+          var small = document.getElementById("small");
+          var big = document.getElementById("big");
+          var mask = document.getElementById("mask");
+          var bigImg = big.firstElementChild || big.firstChild;
+          var smallImg = small.firstElementChild || small.firstChild;
+//          鼠标进入small，显示黄盒子和放大部分
+          small.onmouseover = function () {
+              show(mask);
+              show(big);
+          }
+//          鼠标移开small，隐藏黄盒子和放大部分
+          small.onmouseout = function () {
+              hide(mask);
+              hide(big);
+          }
+//          获取鼠标在small盒子中的坐标
+          small.onmousemove = function (event) {
+              var event = event || window.event;
+//							small在页面的坐标
+              var smallx = box.offsetLeft;
+              var smally = box.offsetTop;
+              var pagex = event.pageX || event.clientX + scroll().left;
+              var pagey = event.pageY || event.clientY + scroll().top;
+//              黄盒子在小盒子的坐标
+              var x = pagex - smallx-parseFloat(getStyle(mask,"width"))/2;
+              var y = pagey - smally-parseFloat(getStyle(mask,"height"))/2;
+              if(x <0){
+                  x=0;
+              }else if(x>parseFloat(getStyle(small,"width"))-parseFloat(getStyle(mask,"width"))){
+                  x=parseFloat(getStyle(small,"width"))-parseFloat(getStyle(mask,"width"));
+              }
+              if(y<0){
+                  y=0;
+              }else if(y>parseFloat(getStyle(small,"height"))-parseFloat(getStyle(mask,"height"))){
+                  y=parseFloat(getStyle(small,"height"))-parseFloat(getStyle(mask,"height"));
+              }
+              mask.style.left = x+"px";
+              mask.style.top = y+ "px";
+
+              var lv = bigImg.offsetWidth/smallImg.offsetWidth;//bigImg最开始是隐藏状态，在隐藏状态下无法获取到他的相关属性。所以比例要在bigImg现实的时候获取
+              bigImg.style.left = -x*lv + "px";
+              bigImg.style.top = -y*lv + "px";
+
+          }
+      }
+	</script>
+</head>
+<body>
+<div class="box" id="box">
+	<!--左侧盒子-->
+	<div class="small" id="small">
+		<img src="images/001.jpg" alt=""/>
+		<!--黄盒子-->
+		<div class="mask" id="mask"></div>
+	</div>
+	<!--右侧盒子-->
+	<div class="big" id="big">
+		<!--大图片-->
+		<img src="images/0001.jpg" alt=""/>
+	</div>
+</div>
+</body>
+</html>

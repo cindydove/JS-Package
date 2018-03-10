@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.box {
+			width: 600px;
+			margin: 200px auto;
+		}
+		input {
+			width: 300px;
+			height: 25px;
+			padding: 5px;
+			font-size: 22px;
+			outline-style: none;
+		}
+		button {
+			width: 50px;
+			height: 35px;
+			font-size: 22px;
+		}
+		ul {
+			width: 492px;
+			padding: 10px;
+			border: 1px solid red;
+			border-top: 0;
+		}
+		li {
+			cursor: pointer;
+			font: 20px/26px "simsun";
+		}
+		li:hover {
+			background-color: red;
+		}
+	</style>
+	<script>
+      //文件入口
+      window.onload = function () {
+          var arr = ["a","aa","aaa","aaaa","ab","abc","abcd","abcde","abcdef","bb","bbc"];
+
+          var inp = document.getElementsByTagName("input")[0];
+          var div = document.getElementsByTagName("div")[0];
+
+          inp.oninput = function () {
+              var divChild = div.children;
+              if(divChild.length === 3){
+                  div.removeChild(divChild[2]);
+              }
+              if(inp.value === ""){
+                  return;
+							}
+              
+//              创建ul
+              var ul = document.createElement("ul");
+              var num = 0;
+              for(var i = 0 ; i < arr.length;i++){
+									if(arr[i].indexOf(inp.value) === 0){
+									    var li = document.createElement("li");
+									    li.innerHTML = arr[i];
+									    ul.appendChild(li);
+									    num++;
+									}
+							}
+							if(num != 0){
+                  div.appendChild(ul); //只有能搜索到内容才会创建ul
+              }
+          }
+      }
+	</script>
+</head>
+<body>
+<div class="box">
+	<input type="text"/>
+	<button>搜索</button>
+	<!--<ul>-->
+	<!--<li>a</li>-->
+	<!--<li>aa</li>-->
+	<!--<li>aaa</li>-->
+	<!--<li>aaaab</li>-->
+	<!--<li>aaaaaaa</li>-->
+	<!--</ul>-->
+</div>
+</body>
+</html>

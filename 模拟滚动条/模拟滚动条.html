@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模拟滚动条</title>
+	<style>
+		* {
+			padding: 0;
+			margin: 0;
+		}
+		body {
+			height: 5000px;
+		}
+		.box {
+			width: 280px;
+			height: 400px;
+			position: relative;
+			margin: 100px auto;
+			overflow: hidden;
+			border: 1px solid red;
+		}
+		.content {
+			width: 240px;
+			padding: 10px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			text-align: center;
+			font: 21px/30px "simsun";
+			background-color: #8dfffa;
+		}
+		.scrollBox {
+			width: 20px;
+			height: 400px;
+			position: absolute;
+			top: 0;
+			right: 0;
+			background-color: #ccc;
+		}
+		.bar {
+			width: 20px;
+			cursor: pointer;
+			position: absolute;
+			top: 0;
+			border-radius: 10px;
+			background-color: red;
+		}
+	</style>
+	<script src="run.js"></script>
+	<script>
+      //文件入口
+      window.onload = function () {
+          var box = document.getElementById("box");
+          var content = box.firstElementChild || box.firstChild;
+          var scrollBox = content.nextElementSibling || content.nextSibling;
+          var bar = scrollBox.firstElementChild || scrollBox.firstChild;
+//					若box高度大于content高度单纯的显示文本内容，不显示滑块
+          if(content.clientHeight <= box.clientHeight){
+              content.style.height = box.clientHeight +"px";
+              content.style.width = parseFloat(getStyle(content,"width")) +  parseFloat(getStyle(scrollBox,"width")) + "px";
+              hide(scrollBox);
+              return;
+          }
+//					bar的高度
+          var proportion = box.clientHeight/content.clientHeight;
+          var barHeight = proportion*scrollBox.clientHeight;
+          bar.style.height = barHeight + "px";
+
+//					给bar设置拖拽事件
+          bar.onmousedown = function (event) {
+              var event = event || window.event;
+              var mousey = event.pageY || event.clientY + scroll().top;
+              var bary = bar.offsetTop;
+
+              document.onmousemove = function (event) {
+                  var event = event || window.event;
+                  var mouseMovey = event.pageY || event.clientY + scroll().top;
+//							    鼠标移动的距离= bar移动的距离
+                  var mouseDiffy = mouseMovey - mousey;
+//							    bar移动时的位置
+                  var barMovey = bary + mouseDiffy;
+//							    确定bar的可移动位置
+                  if(barMovey < 0){
+                      barMovey = 0;
+                  }
+                  if(barMovey > scrollBox.clientHeight - barHeight){
+                      barMovey = scrollBox.clientHeight - barHeight;
+                  }
+                  bar.style.top = barMovey + "px";
+//									设置移动比例
+                  var proportion1 = (content.clientHeight - box.clientHeight)/(scrollBox.clientHeight - bar.clientHeight);
+                  var contenty = bar.offsetTop * proportion1;
+                  content.style.top = -contenty+"px";
+
+                  //清空选中内容的选中状态
+                  window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+              }
+
+              document.onmouseup = function () {
+                  document.onmousemove = null;
+              }
+          }
+
+      }
+	</script>
+</head>
+<body>
+<div class="box" id="box">
+	<div class="content">
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		水垢何曾相受，细看两俱无有，寄语揩背人，尽日劳君挥肘，轻手轻手，居士本来无垢...<br>
+		------end-------
+	</div>
+	<div class="scrollBox">
+		<div class="bar"></div>
+	</div>
+</div>
+</body>
+</html>

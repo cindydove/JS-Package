@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>图片无缝轮播</title>
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			list-style: none;
+			border: 0;
+		}
+		
+		.all {
+			width: 500px;
+			height: 200px;
+			padding: 7px;
+			border: 1px solid #ccc;
+			margin: 100px auto;
+			position: relative;
+		}
+		
+		.screen {
+			width: 500px;
+			height: 200px;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		.screen li {
+			width: 500px;
+			height: 200px;
+			overflow: hidden;
+			float: left;
+		}
+		
+		.screen ul {
+			position: absolute;
+			left: 0;
+			top: 0px;
+			width: 3000px;
+		}
+		
+		.all ol {
+			position: absolute;
+			right: 10px;
+			bottom: 10px;
+			line-height: 20px;
+			text-align: center;
+		}
+		
+		.all ol li {
+			float: left;
+			width: 20px;
+			height: 20px;
+			background: #fff;
+			border: 1px solid #ccc;
+			margin-left: 10px;
+			cursor: pointer;
+		}
+		
+		.all ol li.current {
+			background: yellow;
+		}
+		
+		#arr {
+			display: none;
+		}
+		#arr span {
+			width: 40px;
+			height: 40px;
+			position: absolute;
+			left: 5px;
+			top: 50%;
+			margin-top: -20px;
+			background: #000;
+			cursor: pointer;
+			line-height: 40px;
+			text-align: center;
+			font-weight: bold;
+			font-family: '黑体';
+			font-size: 30px;
+			color: #fff;
+			opacity: 0.3;
+			border: 1px solid #fff;
+		}
+		
+		#arr #right {
+			right: 5px;
+			left: auto;
+		}
+	
+	</style>
+	<script>
+      window.onload = function () {
+          //原理：复制第一张添加到ul的最末尾，
+          // 当第二轮从第一张滑向第二张的时候瞬间闪动到第一张，然后从第一张滑向第二张;
+					var ul = document.getElementById("ul");
+					var ol = document.getElementById("ol");
+					var ulLi = ul.children;
+					var screen = ul.parentNode;
+					var left =document.getElementById("left");
+					var right = document.getElementById("right");
+					var imgWidth = screen.offsetWidth;
+					var arr = left.parentNode;
+					
+          /**
+					 * 需求1: 复制第一张图片添加到ul的最末尾，生成很多li添加到ol中，把第一张点亮;
+           */
+          for(var i = 0 ; i < ulLi.length;i++){
+          		var li = document.createElement("li");
+          		li.innerHTML = i+1;
+          		ol.appendChild(li);
+          }
+          var li = ulLi[0].cloneNode(true);
+					ul.appendChild(li);
+					
+					var firstLiOl = ol.firstElementChild || ol.firstChild;
+					firstLiOl.className = "current";
+
+          /**
+					 *需求2:鼠标进入ol中的，点亮盒子，移动ul;(案例1)
+           */
+          var olLi = ol.children;
+          for(var i = 0 ; i < olLi.length;i++){
+              olLi[i].index = i;
+          		olLi[i].onmouseover = function () {
+									for(var j = 0 ; j<olLi.length ;j++){
+											olLi[j].className ="";
+									}
+									if(ulKey === 0 && this.index >= ulLi.length/2 ){ //从第一张到末几张
+									    ul.style.left = -(ulLi.length-1)*imgWidth+"px";
+                      ulKey= olKey=this.index;
+                      left = this.index*imgWidth;
+									}else if(ulKey>=ulLi.length/2 && this.index === 0){//从末几张到第一张（其实是到了最后一张）
+											olKey = this.index = 0;
+                      ulKey = ulLi.length-1;
+                      left = (ulLi.length-1)*imgWidth;
+									}else if(ulKey === ulLi.length-1 && this.index <  ulLi.length/2 ){//从最后一张到前几张
+											ul.style.left = 0;
+                      ulkey = olKey = this.index;
+											left = imgWidth*this.index;
+									} else{
+                      ulKey= olKey=this.index;
+                      left = this.index*imgWidth;
+									}
+									this.className = "current";
+									animate(ul,-left);
+              }
+          }
+
+          /**
+					 *需求3: 鼠标点击右侧按钮，点亮盒子，移动ul;(案例2和无缝滚动原理)
+					 *
+           */
+          var olKey = 0;
+          var ulKey = 0;
+          right.onclick = function () {
+							runRight();
+          }
+          
+					/**
+					 *需求4：鼠标点击左侧按钮，点亮盒子，移动ul;
+					 */
+          left.onclick = function () {
+              runLeft();
+          }
+          
+          /**
+           *需求5: 定时器的添加;(类比右侧按钮逻辑)
+           */
+          var timer = setInterval(function () {
+              runRight()
+          },1000);
+
+          screen.onmouseenter = function () {//onmouseover和onmouseenter一样只不过onmouseover支持冒泡，onmouseenter不支持冒泡；
+              clearInterval(timer);
+              arr.style.display = "block";
+          }
+          screen.onmouseleave =function () {
+              arr.style.display = "none";
+              timer = setInterval(function () {
+                  runRight()
+              },1000);
+          }
+          
+          /**
+					 * 点击右侧按钮，图片向右滑动
+           */
+          function runRight() {
+              olKey++;
+              ulKey++;
+              for(var j = 0 ; j<olLi.length ;j++){
+                  olLi[j].className ="";
+              }
+              
+              if(ulKey === ulLi.length){
+              ul.style.left = 0;
+              ulKey = 1;
+							}
+              
+              if(olKey === olLi.length){
+             		 olKey = 0;
+							}
+              olLi[olKey].className ="current";
+              left = imgWidth*ulKey;
+              animate(ul,-left);
+
+          }
+          
+          /**
+           * 点击左侧按钮，图片向左滑动
+           */
+          function runLeft(){
+              olKey--;
+              ulKey--;
+              for(var j = 0 ; j<olLi.length ;j++){
+                  olLi[j].className ="";
+              }
+              if(ulKey === -1){
+                   ul.style.left = -imgWidth*(ulLi.length-1)+"px";
+                  ulKey = ulLi.length-2;
+							};
+							if(olKey === -1){
+							    olKey = olLi.length-1;
+							}
+              olLi[olKey].className ="current";
+              left = imgWidth*ulKey;
+              animate(ul,-left);
+					}
+
+          /**
+					 *匀速动画
+           * @param ele  要移动的元素
+           * @param target  移动的目标位置
+           */
+          function animate(ele, target) {
+              clearInterval(ele.timer);
+              ele.timer = setInterval(function () {
+                  var step = target > ele.offsetLeft ? 10 : -10;
+                  ele.style.left = ele.offsetLeft + step + "px";
+                  if (Math.abs(target - ele.offsetLeft) <= Math.abs(step)) {
+                      ele.style.left = target + "px";
+                      clearInterval(ele.timer);
+                  }
+              }, 10);
+          }
+      }
+	</script>
+</head>
+
+<body>
+
+
+<div class="all" id='all'>
+	<div class="screen" id="screen">
+		<ul id="ul">
+			<li><img src="images/1.jpg" width="500" height="200"/></li>
+			<li><img src="images/2.jpg" width="500" height="200"/></li>
+			<li><img src="images/3.jpg" width="500" height="200"/></li>
+			<li><img src="images/4.jpg" width="500" height="200"/></li>
+			<li><img src="images/5.jpg" width="500" height="200"/></li>
+		</ul>
+		<ol id="ol">
+		
+		</ol>
+		<div id="arr">
+			<span id="left"><</span>
+			<span id="right">></span>
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>水果移动</title>
+	<style>
+		select {
+			width:200px;
+			height:300px;
+			font-size: 20px;
+			background: #89dd40;
+		}
+	</style>
+	<script>
+      //文件入口
+      window.onload = function () {
+				var btn = document.getElementsByTagName("button");
+				var sel1 = document.getElementById("sel1");
+				var sel2 = document.getElementById("sel2");
+				btn[0].addEventListener("click",function(){
+            allRun(sel1,sel2)
+				})
+
+          btn[1].addEventListener("click",function(){
+              allRun(sel2,sel1)
+          })
+				btn[2].addEventListener("click",function () {
+						someRun(sel1,sel2);
+        })
+          btn[3].addEventListener("click",function () {
+              someRun(sel2,sel1);
+          })
+      }
+	</script>
+	<script src = "run.js"></script>
+</head>
+<body>
+<select name="" id="sel1" size = "4" multiple>
+	<option value="0">0香蕉</option>
+	<option value="1">1大鸭梨</option>
+	<option value="2">2苹果</option>
+	<option value="3">3大西瓜</option>
+</select>
+<button>&gt;&gt;&gt;</button>
+<button>&lt;&lt;&lt;</button>
+<button>&gt;</button>
+<button>&lt;</button>
+<select name="" id="sel2" size = "4" multiple>
+</select>
+</body>
+</html>
